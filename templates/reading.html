@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Reading - English Skills Improver{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-book-reader text-info"></i> Reading Comprehension</h2>
+            <div class="btn-group">
+                <a href="{{ url_for('reading') }}" class="btn btn-outline-info">
+                    <i class="fas fa-random"></i> Random Passage
+                </a>
+                <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-newspaper"></i> {{ passage.title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="reading-passage mb-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5><i class="fas fa-book-open text-info"></i> Reading Passage</h5>
+                            <p class="lead">{{ passage.text }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="readingForm">
+                    <input type="hidden" name="passage_index" value="{{ passage_index }}">
+                    
+                    <h5><i class="fas fa-question-circle text-warning"></i> Comprehension Questions</h5>
+                    
+                    {% for i, question in enumerate(passage.questions) %}
+                        <div class="question-block mb-4">
+                            <h6 class="question-number">Question {{ i + 1 }}:</h6>
+                            <p class="question-text">{{ question.question }}</p>
+                            
+                            {% for j, option in enumerate(question.options) %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="answer" id="q{{ i }}_option{{ j }}" value="{{ j }}">
+                                    <label class="form-check-label" for="q{{ i }}_option{{ j }}">
+                                        {{ option }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="fas fa-check"></i> Submit Answers
+                        </button>
+                    </div>
+                </form>
+
+                <div id="results" class="mt-4" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5><i class="fas fa-lightbulb text-warning"></i> Reading Tips</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-eye text-primary"></i> Read Carefully</h6>
+                        <p class="small">Take your time to understand the main ideas and details.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-search text-success"></i> Look for Clues</h6>
+                        <p class="small">The answers are usually found directly in the passage.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="fas fa-redo text-info"></i> Re-read if Needed</h6>
+                        <p class="small">Don't hesitate to go back and re-read parts of the passage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('readingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const answers = formData.getAll('answer');
+    
+    if (answers.length === 0) {
+        alert('Please answer all questions before submitting.');
+        return;
+    }
+    
+    fetch('/check_reading', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.style.display = 'block';
+        
+        let correctCount = 0;
+        let resultsHTML = '<h5><i class="fas fa-chart-bar"></i> Results</h5>';
+        
+        data.results.forEach((result, index) => {
+            if (result.correct) correctCount++;
+            
+            resultsHTML += `
+                <div class="alert ${result.correct ? 'alert-success' : 'alert-danger'} mb-2">
+                    <h6>Question ${index + 1}: ${result.correct ? 'Correct' : 'Incorrect'}</h6>
+                    <p class="mb-1"><strong>Question:</strong> ${result.question}</p>
+                    <p class="mb-1"><strong>Your answer:</strong> ${result.user_answer}</p>
+                    ${!result.correct ? `<p class="mb-0"><strong>Correct answer:</strong> ${result.correct_answer}</p>` : ''}
+                </div>
+            `;
+        });
+        
+        const percentage = Math.round((correctCount / data.results.length) * 100);
+        resultsHTML = `
+            <div class="alert alert-info">
+                <h5><i class="fas fa-trophy"></i> Score: ${correctCount}/${data.results.length} (${percentage}%)</h5>
+            </div>
+        ` + resultsHTML;
+        
+        resultsDiv.innerHTML = resultsHTML;
+        
+        // Disable form
+        const radioButtons = document.querySelectorAll('input[name="answer"]');
+        radioButtons.forEach(radio => radio.disabled = true);
+        document.querySelector('button[type="submit"]').disabled = true;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while checking your answers.');
+    });
+});
+</script>
+{% endblock %}

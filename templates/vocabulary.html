@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Vocabulary - English Skills Improver{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-spell-check text-primary"></i> Vocabulary Builder</h2>
+            <div class="btn-group">
+                <a href="{{ url_for('vocabulary') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-random"></i> Random Word
+                </a>
+                <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-book"></i> Word of the Day
+                    </h4>
+                    <span class="badge bg-light text-dark">
+                        {{ word_index + 1 }} of {{ total_words }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h1 class="display-4 text-primary word-highlight">{{ word.word }}</h1>
+                    <p class="text-muted"><em>/{{ word.word }}/</em></p>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <h5><i class="fas fa-info-circle text-info"></i> Definition</h5>
+                        <p class="lead">{{ word.definition }}</p>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <h5><i class="fas fa-exchange-alt text-success"></i> Synonyms</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for synonym in word.synonyms %}
+                                <span class="badge bg-success">{{ synonym }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <h5><i class="fas fa-quote-left text-warning"></i> Example</h5>
+                        <blockquote class="blockquote">
+                            <p class="mb-0">{{ word.example }}</p>
+                        </blockquote>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6><i class="fas fa-lightbulb text-warning"></i> Memory Tip</h6>
+                                <p class="mb-0">Try to use "{{ word.word }}" in a sentence today! The more you use new words, the better you'll remember them.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    {% if word_index > 0 %}
+                        <a href="{{ url_for('vocabulary', word=word_index-1) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-chevron-left"></i> Previous Word
+                        </a>
+                    {% else %}
+                        <span></span>
+                    {% endif %}
+                    
+                    {% if word_index < total_words - 1 %}
+                        <a href="{{ url_for('vocabulary', word=word_index+1) }}" class="btn btn-primary">
+                            Next Word <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('vocabulary', word=0) }}" class="btn btn-primary">
+                            Start Over <i class="fas fa-redo"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

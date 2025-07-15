@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Practice - SpeakEasy{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-dumbbell"></i> Free Practice</h1>
+        <p>Practice your pronunciation with random phrases from all lessons</p>
+    </div>
+</div>
+
+<div class="practice-area">
+    <div class="container">
+        <div class="practice-card">
+            <div class="practice-header">
+                <h2>Random Phrase Practice</h2>
+                <button class="btn btn-secondary" id="getNewPhrase">
+                    <i class="fas fa-refresh"></i> New Phrase
+                </button>
+            </div>
+
+            <div class="phrase-display">
+                <div class="phrase-content">
+                    <p class="phrase-text" id="practicePhrase">{{ phrase.text }}</p>
+                    <div class="phrase-meta">
+                        <span class="difficulty-badge difficulty-{{ phrase.difficulty }}">
+                            {{ phrase.difficulty|title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practice-controls">
+                <button class="btn btn-secondary" id="playPhrase">
+                    <i class="fas fa-volume-up"></i> Listen
+                </button>
+                <button class="btn btn-primary practice-record-btn" id="practiceRecord">
+                    <i class="fas fa-microphone"></i> <span id="practiceRecordText">Record</span>
+                </button>
+            </div>
+
+            <div class="practice-feedback" id="practiceFeedback" style="display: none;">
+                <div class="feedback-card">
+                    <div class="score-circle">
+                        <div class="score-inner">
+                            <span class="score-number" id="practiceScore">0</span>
+                            <span class="score-percent">%</span>
+                        </div>
+                    </div>
+                    <div class="feedback-details">
+                        <h3 id="feedbackTitle">Good Job!</h3>
+                        <p id="feedbackMessage">Keep practicing to improve your pronunciation.</p>
+                        <div class="feedback-tips" id="feedbackTips"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practice-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalPracticed">0</div>
+                        <div class="stat-label">Phrases Practiced Today</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="averagePracticeScore">0%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="practiceStreak">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="practice-tips-card">
+            <h3><i class="fas fa-lightbulb"></i> Practice Tips</h3>
+            <ul class="tips-list">
+                <li><i class="fas fa-check"></i> Speak clearly and at a moderate pace</li>
+                <li><i class="fas fa-check"></i> Listen to the example before recording</li>
+                <li><i class="fas fa-check"></i> Find a quiet environment for better recognition</li>
+                <li><i class="fas fa-check"></i> Practice the same phrase multiple times</li>
+                <li><i class="fas fa-check"></i> Focus on difficult sounds and words</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize practice with current phrase
+window.currentPhrase = {
+    text: "{{ phrase.text }}",
+    difficulty: "{{ phrase.difficulty }}"
+};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/practice.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Progress - SpeakEasy{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-chart-line"></i> Your Progress</h1>
+        <p>Track your improvement and celebrate your achievements</p>
+    </div>
+</div>
+
+<div class="progress-dashboard">
+    <div class="container">
+        <div class="progress-overview">
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Score</h3>
+                        <p class="card-value">{{ progress.total_score or 0 }}</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Lessons Completed</h3>
+                        <p class="card-value">{{ progress.completed_lessons|length or 0 }}</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Streak Days</h3>
+                        <p class="card-value">{{ progress.streak_days or 0 }}</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Phrases Practiced</h3>
+                        <p class="card-value">{{ progress.pronunciation_scores|length or 0 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-details">
+            <div class="progress-section">
+                <h2><i class="fas fa-star"></i> Recent Achievements</h2>
+                <div class="achievements-grid">
+                    {% if progress.completed_lessons %}
+                        {% for lesson in progress.completed_lessons %}
+                        <div class="achievement-badge">
+                            <i class="fas fa-medal"></i>
+                            <span>Completed Lesson</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="no-achievements">
+                        <i class="fas fa-rocket"></i>
+                        <h3>Start Your Journey!</h3>
+                        <p>Complete your first lesson to earn achievements</p>
+                        <a href="{{ url_for('lessons') }}" class="btn btn-primary">
+                            Begin Learning
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if progress.pronunciation_scores %}
+            <div class="progress-section">
+                <h2><i class="fas fa-chart-bar"></i> Pronunciation Scores</h2>
+                <div class="scores-list">
+                    {% for phrase, score in progress.pronunciation_scores.items() %}
+                    <div class="score-item">
+                        <div class="score-phrase">
+                            <span class="phrase-text">"{{ phrase }}"</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: {{ score }}%"></div>
+                            <span class="score-text">{{ score }}%</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="progress-section">
+                <h2><i class="fas fa-target"></i> Learning Goals</h2>
+                <div class="goals-grid">
+                    <div class="goal-card">
+                        <div class="goal-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <h3>Daily Practice</h3>
+                        <p>Practice speaking for at least 10 minutes every day</p>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {% if progress.streak_days > 0 %}100{% else %}0{% endif %}%"></div>
+                            </div>
+                            <span>{% if progress.streak_days > 0 %}Completed{% else %}Not started{% endif %}</span>
+                        </div>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3>Complete 5 Lessons</h3>
+                        <p>Finish 5 structured lessons to build your foundation</p>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ (progress.completed_lessons|length / 5 * 100) if progress.completed_lessons|length < 5 else 100 }}%"></div>
+                            </div>
+                            <span>{{ progress.completed_lessons|length }}/5 completed</span>
+                        </div>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>80% Average Score</h3>
+                        <p>Achieve an average pronunciation score of 80% or higher</p>
+                        <div class="goal-progress">
+                            {% set avg_score = (progress.total_score / progress.pronunciation_scores|length) if progress.pronunciation_scores else 0 %}
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ (avg_score / 80 * 100) if avg_score < 80 else 100 }}%"></div>
+                            </div>
+                            <span>{{ "%.1f"|format(avg_score) }}% average</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h2><i class="fas fa-clock"></i> Study Recommendations</h2>
+                <div class="recommendations">
+                    {% if not progress.completed_lessons %}
+                    <div class="recommendation-item">
+                        <i class="fas fa-play"></i>
+                        <div>
+                            <h4>Start with Beginner Lessons</h4>
+                            <p>Begin your journey with basic greetings and common expressions</p>
+                            <a href="{{ url_for('lessons') }}" class="recommendation-link">Go to Lessons</a>
+                        </div>
+                    </div>
+                    {% elif progress.completed_lessons|length < 3 %}
+                    <div class="recommendation-item">
+                        <i class="fas fa-forward"></i>
+                        <div>
+                            <h4>Continue Learning</h4>
+                            <p>Keep up the momentum by completing more structured lessons</p>
+                            <a href="{{ url_for('lessons') }}" class="recommendation-link">Continue Lessons</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="recommendation-item">
+                        <i class="fas fa-dumbbell"></i>
+                        <div>
+                            <h4>Practice Mode</h4>
+                            <p>Enhance your skills with free practice sessions</p>
+                            <a href="{{ url_for('practice') }}" class="recommendation-link">Start Practicing</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

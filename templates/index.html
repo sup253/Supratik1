@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Master Spoken English with AI</h1>
+        <p class="hero-subtitle">Improve your pronunciation, fluency, and confidence with our interactive speech recognition technology</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('lessons') }}" class="btn btn-primary">
+                <i class="fas fa-play"></i> Start Learning
+            </a>
+            <a href="{{ url_for('practice') }}" class="btn btn-secondary">
+                <i class="fas fa-microphone"></i> Quick Practice
+            </a>
+        </div>
+    </div>
+    <div class="hero-image">
+        <i class="fas fa-comments hero-icon"></i>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose SpeakEasy?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+                <h3>Speech Recognition</h3>
+                <p>Advanced AI analyzes your pronunciation and provides instant feedback to help you improve.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <h3>Text-to-Speech</h3>
+                <p>Listen to perfect pronunciation examples and practice speaking like a native speaker.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Structured Lessons</h3>
+                <p>Learn step by step with our carefully designed curriculum from beginner to advanced levels.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your improvement with detailed progress reports and achievement badges.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <div class="container">
+        <h2>Ready to Start Speaking Better English?</h2>
+        <p>Join thousands of learners who have improved their English speaking skills with SpeakEasy</p>
+        <a href="{{ url_for('lessons') }}" class="btn btn-primary btn-large">
+            Begin Your Journey
+        </a>
+    </div>
+</div>
+{% endblock %}

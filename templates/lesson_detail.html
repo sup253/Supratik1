@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} - SpeakEasy{% endblock %}
+
+{% block content %}
+<div class="lesson-detail-header">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('lessons') }}"><i class="fas fa-arrow-left"></i> Back to Lessons</a>
+        </div>
+        <h1><i class="fas fa-graduation-cap"></i> {{ lesson.title }}</h1>
+        <p class="lesson-level">Level: <span class="level-badge level-{{ level }}">{{ level|title }}</span></p>
+    </div>
+</div>
+
+<div class="lesson-content-area">
+    <div class="container">
+        <div class="lesson-progress-bar">
+            <div class="progress-track">
+                <div class="progress-fill" id="lessonProgress"></div>
+            </div>
+            <span class="progress-text">Progress: <span id="progressText">0/{{ lesson.phrases|length }}</span></span>
+        </div>
+
+        <div class="phrase-practice-area">
+            <div class="phrase-card" id="phraseCard">
+                <div class="phrase-header">
+                    <h3>Practice Phrase <span id="phraseNumber">1</span> of {{ lesson.phrases|length }}</h3>
+                    <div class="phrase-difficulty">
+                        <span class="difficulty-badge" id="phraseDifficulty">Easy</span>
+                    </div>
+                </div>
+                
+                <div class="phrase-text">
+                    <p id="phraseText">{{ lesson.phrases[0].text }}</p>
+                </div>
+
+                <div class="phrase-controls">
+                    <button class="btn btn-secondary" id="listenBtn">
+                        <i class="fas fa-volume-up"></i> Listen
+                    </button>
+                    <button class="btn btn-primary" id="recordBtn">
+                        <i class="fas fa-microphone"></i> <span id="recordText">Start Recording</span>
+                    </button>
+                    <button class="btn btn-success" id="nextBtn" style="display: none;">
+                        <i class="fas fa-arrow-right"></i> Next Phrase
+                    </button>
+                </div>
+
+                <div class="recording-feedback" id="recordingFeedback" style="display: none;">
+                    <div class="feedback-content">
+                        <div class="score-display">
+                            <span class="score-label">Pronunciation Score:</span>
+                            <span class="score-value" id="pronunciationScore">0</span>%
+                        </div>
+                        <div class="feedback-text" id="feedbackText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-completion" id="lessonCompletion" style="display: none;">
+            <div class="completion-card">
+                <div class="completion-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2>Lesson Completed!</h2>
+                <p>Great job! You've completed all phrases in this lesson.</p>
+                <div class="completion-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="averageScore">0</span>%
+                        <span class="stat-label">Average Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">{{ lesson.phrases|length }}</span>
+                        <span class="stat-label">Phrases Practiced</span>
+                    </div>
+                </div>
+                <div class="completion-actions">
+                    <a href="{{ url_for('lessons') }}" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> More Lessons
+                    </a>
+                    <a href="{{ url_for('practice') }}" class="btn btn-primary">
+                        <i class="fas fa-dumbbell"></i> Free Practice
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Pass lesson data to JavaScript
+window.lessonData = {
+    phrases: {{ lesson.phrases | tojson }},
+    level: "{{ level }}",
+    lessonId: {{ lesson.id }}
+};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/lesson.js') }}"></script>
+{% endblock %}

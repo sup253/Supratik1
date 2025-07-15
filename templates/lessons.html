@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Lessons - SpeakEasy{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-book"></i> English Lessons</h1>
+        <p>Choose your level and start learning with structured pronunciation lessons</p>
+    </div>
+</div>
+
+<div class="lessons-container">
+    <div class="container">
+        {% for level, level_lessons in lessons.items() %}
+        <div class="level-section">
+            <div class="level-header">
+                <h2 class="level-title">
+                    {% if level == 'beginner' %}
+                        <i class="fas fa-seedling"></i> Beginner
+                    {% elif level == 'intermediate' %}
+                        <i class="fas fa-leaf"></i> Intermediate
+                    {% else %}
+                        <i class="fas fa-tree"></i> Advanced
+                    {% endif %}
+                </h2>
+                <span class="level-badge level-{{ level }}">{{ level|title }}</span>
+            </div>
+            
+            <div class="lessons-grid">
+                {% for lesson in level_lessons %}
+                <div class="lesson-card">
+                    <div class="lesson-header">
+                        <h3 class="lesson-title">{{ lesson.title }}</h3>
+                        <span class="lesson-phrases-count">{{ lesson.phrases|length }} phrases</span>
+                    </div>
+                    <div class="lesson-content">
+                        <div class="lesson-preview">
+                            {% for phrase in lesson.phrases[:2] %}
+                            <div class="phrase-preview">
+                                <i class="fas fa-quote-left"></i>
+                                <span>{{ phrase.text }}</span>
+                            </div>
+                            {% endfor %}
+                            {% if lesson.phrases|length > 2 %}
+                            <div class="phrase-preview more">
+                                <span>+{{ lesson.phrases|length - 2 }} more phrases...</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="lesson-actions">
+                            <a href="{{ url_for('lesson_detail', level=level, lesson_id=lesson.id) }}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-play"></i> Start Lesson
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
